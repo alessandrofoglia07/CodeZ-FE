@@ -1,71 +1,78 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-interface ICategory {
-    title: string;
-    img: string;
+interface StarEl {
+    x: number;
+    y: number;
+    size: number;
 }
 
-const Category: React.FC<ICategory> = ({ title, img }: ICategory) => {
+const Star = ({ x, y, size }: StarEl) => {
+    const style: React.CSSProperties = {
+        top: y,
+        left: x,
+        width: size,
+        height: size,
+        animation: `floatInCircle ${Math.floor(Math.random() * 10) + 15}s linear infinite`
+    };
+
+    return <div className='star fixed rounded-full bg-slate-300' style={style} />;
+};
+
+const BgStars: React.FC = () => {
+    const [stars, setStars] = useState<StarEl[]>([]);
+
+    const removeStars = async () => {
+        const stars = document.getElementsByClassName('star');
+
+        // Fix this
+        for (const star of stars) {
+            star.classList.add('fade-out');
+            setTimeout(() => {
+                star.remove();
+            }, 700);
+        }
+    };
+
+    const changeStars = () => {
+        const { innerWidth, innerHeight } = window;
+
+        removeStars();
+
+        const currStars = [];
+
+        for (let i = 0; i < 30; i++) {
+            const x = Math.random() * innerWidth;
+            const y = Math.random() * innerHeight;
+            const size = Math.floor(Math.random() * 3);
+
+            currStars.push({ x, y, size });
+        }
+
+        setStars(currStars);
+    };
+
+    useEffect(() => {
+        changeStars();
+        const interval = setInterval(changeStars, 15000);
+        return () => clearInterval(interval);
+    }, []);
+
     return (
-        <div className='flex -md:flex-col items-center flex-wrap gap-8 md:pt-24 pt-16 md:px-16 select-none'>
-            <img className='w-32' src={img} />
-            <h2 className='font-bold md:text-6xl text-3xl tracking-tight transition-colors'>{title}</h2>
-        </div>
+        <>
+            {stars.map(({ x, y, size }, i) => (
+                <Star key={i} x={x} y={y} size={size} />
+            ))}
+        </>
     );
 };
 
-const categories: ICategory[] = [
-    {
-        title: 'React + Vite',
-        img: '/logos/vite-logo.png'
-    },
-    {
-        title: 'Typescript',
-        img: '/logos/ts-logo.png'
-    },
-    {
-        title: 'PWA',
-        img: '/logos/pwa-logo.png'
-    },
-    {
-        title: 'pnpm',
-        img: '/logos/pnpm-logo.png'
-    },
-    {
-        title: 'ESLint',
-        img: '/logos/eslint-logo.svg'
-    },
-    {
-        title: 'Docker',
-        img: '/logos/docker-logo.png'
-    },
-    {
-        title: 'TailwindCSS',
-        img: '/logos/tailwindcss-logo.png'
-    },
-    {
-        title: 'Headless UI',
-        img: '/logos/headlessui-logo.png'
-    }
-];
-
 const MainPage: React.FC = () => {
     return (
-        <div id='MainPage' className='w-full flex flex-col items-center'>
-            <h1 className='font-bold md:text-7xl text-3xl tracking-tight pt-32'>
-                Modern <span className='bg-gradient-to-br from-[#5CAFFF] to-[#BD34FE] bg-clip-text text-transparent'>Vite</span> React App
-            </h1>
-            <div className='grid md:grid-cols-2 grid-cols-1 pb-32 pt-8'>
-                {categories.map(({ title, img }, i) => (
-                    <Category key={i} title={title} img={img} />
-                ))}
+        <div>
+            <div id='bg' className='fixed h-full w-full'>
+                <BgStars />
             </div>
-            <p className='text-xl py-4 tracking-wide'>
-                Made with 💜 by{' '}
-                <a href='https://github.com/alessandrofoglia07' className='underline underline-offset-2'>
-                    Alexxino
-                </a>
-            </p>
+            <h1>Main Page</h1>
         </div>
     );
 };

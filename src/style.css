@@ -1,15 +1,60 @@
+/*
+    Cousine - 400, 700
+    Fira Code - 300, 400, 500, 600, 700
+    JetBrains Mono - 300, 400, 500, 600, 700, 800
+    Noto Sans Mono - 300, 400, 500, 600, 700, 800
+    Roboto Mono - 400, 500, 600, 700
+ */
+@import url('https://fonts.googleapis.com/css2?family=Cousine:wght@400;700&family=Fira+Code:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Noto+Sans+Mono:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
     body {
-        background-color: #1E1E20;
+        background: radial-gradient(ellipse at bottom, #0d1d31 0%, #0c0d13 100%);
         color: #fff;
+        min-height: 100vh;
+        min-height: 100svh;
         width: 100%;
-        overflow-x: hidden;
+        overflow: hidden;
         -webkit-font-smoothing: antialiased;
         text-rendering: optimizeLegibility;
         font-synthesis: style;
+    }
+
+    @keyframes floatInCircle {
+        0% {
+            transform: rotate(0deg) translateY(30px) rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg) translateY(30px) rotate(-360deg);
+        }
+    }
+
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeOut {
+        0% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+}
+
+@layer utilities {
+    .fade-out {
+        opacity: 1;
+        animation: fadeOut 0.5s ease-in-out 1 forwards;
     }
 }
