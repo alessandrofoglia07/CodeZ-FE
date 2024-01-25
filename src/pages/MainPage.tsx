@@ -25,8 +25,9 @@ const BgStars: React.FC = () => {
     const removeStars = async () => {
         const stars = document.getElementsByClassName('star');
 
+        // fix animation
         for (const star of stars) {
-            star.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 700, fill: 'forwards' });
+            star.animate([{ opacity: 1 }, { opacity: 0 }], { duration: Math.random() * 700 + 300, fill: 'forwards' });
         }
 
         return new Promise<void>((resolve) => {
@@ -39,6 +40,8 @@ const BgStars: React.FC = () => {
 
     const changeStars = async () => {
         const { innerWidth, innerHeight } = window;
+
+        const stars = document.getElementsByClassName('star');
 
         if (stars.length > 0) {
             await removeStars();
