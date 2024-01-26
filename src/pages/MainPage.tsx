@@ -16,7 +16,7 @@ const Star = ({ x, y, size, orientation = 'bottom-top', fading_out }: StarEl) =>
         left: x,
         width: size,
         height: size,
-        animation: `fadeIn 0.7s ease-in-out forwards, ${orientation === 'bottom-top' ? 'float1' : 'float2'} ${animationDuration}s ease-in-out infinite${fading_out ? ', fadeOut 0.7s ease-in-out forwards' : ''}`
+        animation: `fadeIn 0.6s ease-in-out forwards, ${orientation === 'bottom-top' ? 'float1' : 'float2'} ${animationDuration}s ease-in-out infinite${fading_out ? ', fadeOut 0.6s ease-in-out forwards' : ''}`
     };
 
     return <div className='star fixed rounded-full bg-slate-300' style={style} />;
@@ -56,11 +56,20 @@ const BgStars: React.FC = () => {
         }
 
         setStars([...currStars]);
+
+        const starEls = document.getElementsByClassName('star');
+        for (let i = 0; i < stars.length; i++) {
+            const star = starEls[i] as HTMLElement;
+            const currAnimation = star.style.animation;
+            star.style.animation = 'none';
+            void star.offsetWidth; // Trigger reflow
+            star.style.animation = currAnimation;
+        }
     };
 
     useEffect(() => {
         changeStars();
-        const interval = setInterval(changeStars, 3000);
+        const interval = setInterval(changeStars, 15000);
         return () => clearInterval(interval);
     }, []);
 
