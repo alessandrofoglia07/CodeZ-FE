@@ -5,15 +5,18 @@ interface StarEl {
     y: number;
     size: number;
     orientation?: 'top-bottom' | 'bottom-top';
+    fading_out?: boolean;
 }
 
-const Star = ({ x, y, size, orientation = 'bottom-top' }: StarEl) => {
+const Star = ({ x, y, size, orientation = 'bottom-top', fading_out }: StarEl) => {
+    const [animationDuration] = useState<number>(Math.floor(Math.random() * 10) + 5);
+
     const style: React.CSSProperties = {
         top: y,
         left: x,
         width: size,
         height: size,
-        animation: `${orientation === 'bottom-top' ? 'float1' : 'float2'} ${Math.floor(Math.random() * 10) + 5}s ease-in-out infinite`
+        animation: `fadeIn 0.7s ease-in-out forwards, ${orientation === 'bottom-top' ? 'float1' : 'float2'} ${animationDuration}s ease-in-out infinite${fading_out ? ', fadeOut 0.7s ease-in-out forwards' : ''}`
     };
 
     return <div className='star fixed rounded-full bg-slate-300' style={style} />;
@@ -23,12 +26,7 @@ const BgStars: React.FC = () => {
     const [stars, setStars] = useState<StarEl[]>([]);
 
     const removeStars = async () => {
-        const stars = document.getElementsByClassName('star');
-
-        // fix animation
-        for (const star of stars) {
-            star.animate([{ opacity: 1 }, { opacity: 0 }], { duration: Math.random() * 700 + 300, fill: 'forwards' });
-        }
+        setStars((prev) => prev.map((star) => ({ ...star, fading_out: true })));
 
         return new Promise<void>((resolve) => {
             setTimeout(() => {
@@ -54,7 +52,7 @@ const BgStars: React.FC = () => {
             const y = Math.random() * innerHeight;
             const size = Math.floor(Math.random() * 3 + 1);
 
-            currStars.push({ x, y, size });
+            currStars.push({ x, y, size, fading_out: false });
         }
 
         setStars([...currStars]);
@@ -62,14 +60,14 @@ const BgStars: React.FC = () => {
 
     useEffect(() => {
         changeStars();
-        const interval = setInterval(changeStars, 15000);
+        const interval = setInterval(changeStars, 3000);
         return () => clearInterval(interval);
     }, []);
 
     return (
         <>
-            {stars.map(({ x, y, size }, i) => (
-                <Star key={i} x={x} y={y} orientation={i % 2 === 0 ? 'bottom-top' : 'top-bottom'} size={size} />
+            {stars.map(({ x, y, size, fading_out }, i) => (
+                <Star key={i} x={x} y={y} orientation={i % 2 === 0 ? 'bottom-top' : 'top-bottom'} fading_out={fading_out} size={size} />
             ))}
         </>
     );
