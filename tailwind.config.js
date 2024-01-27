@@ -7,12 +7,31 @@ const config = {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Inter', ...defaultTheme.fontFamily.sans]
+                sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                cousine: ['Cousine', ...defaultTheme.fontFamily.mono],
+                fira_code: ['Fira Code', ...defaultTheme.fontFamily.mono],
+                jetbrains_mono: ['JetBrains Mono', ...defaultTheme.fontFamily.mono],
+                noto_sans_mono: ['Noto Sans Mono', ...defaultTheme.fontFamily.mono],
+                roboto_mono: ['Roboto Mono', ...defaultTheme.fontFamily.mono],
+                courier_prime: ['Courier Prime', ...defaultTheme.fontFamily.mono]
             },
             screens: {
                 '-md': { max: '767px' },
                 '-sm': { max: '639px' },
                 '-lg': { max: '1023px' }
+            },
+            colors: {
+                primary: '#40A2D8',
+                secondary: '#141E2A'
+            },
+            padding: {
+                18: '4.5rem'
+            },
+            margin: {
+                18: '4.5rem'
+            },
+            width: {
+                18: '4.5rem'
             }
         }
     },
