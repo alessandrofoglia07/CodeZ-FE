@@ -9,9 +9,7 @@ const MainPage: React.FC = () => {
                 <BgStars />
             </div>
             <Sidebar />
-            <main className='md:ml-18 -md:pt-16'>
-                <h1>Main Page</h1>
-            </main>
+            <main className='h-screen w-screen md:pl-18 -md:pt-16'></main>
         </div>
     );
 };

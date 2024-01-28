@@ -8,7 +8,7 @@ interface Props {
 const Logo: React.FC<Props> = ({ className, containerClassName }: Props) => {
     return (
         <div id='Logo' className={`flex w-min items-center justify-center ${containerClassName}`}>
-            <a href='/' className={`font-courier_prime text-primary text-6xl font-bold ${className}`}>
+            <a href='/' className={`font-courier_prime text-6xl font-bold text-slate-100 ${className}`}>
                 Z
             </a>
         </div>
