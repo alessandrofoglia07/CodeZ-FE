@@ -1,28 +1,14 @@
 import BgStars from '@/components/MainPageBg';
 import Sidebar from '@/components/Sidebar';
 import React, { useState } from 'react';
-import { z } from 'zod';
-
-const usernameLengthError = 'Username must be between 3 and 20 characters long';
-const passwordLengthError = 'Password must be between 8 and 20 characters long';
-
-const usernameSchema = z.string().min(3, usernameLengthError).max(20, usernameLengthError);
-const emailSchema = z.string().email('Invalid email address');
-const passwordSchema = z.string().min(8, passwordLengthError).max(20, passwordLengthError);
+import { usernameSchema, emailSchema, passwordSchema, authFormSchema as formSchema } from '@/utils/validation';
+import { AuthFormSchema as FormSchema } from '@/utils/types';
 
 const schemas = {
     username: usernameSchema,
     email: emailSchema,
     password: passwordSchema
 };
-
-const formSchema = z.object({
-    username: usernameSchema,
-    email: emailSchema,
-    password: passwordSchema
-});
-
-type FormSchema = z.infer<typeof formSchema>;
 
 const SignUpPage: React.FC = () => {
     const [form, setForm] = useState<FormSchema>({
