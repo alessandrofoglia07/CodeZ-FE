@@ -3,6 +3,9 @@ import Sidebar from '@/components/Sidebar';
 import React, { useState } from 'react';
 import { usernameSchema, emailSchema, passwordSchema, authFormSchema as formSchema } from '@/utils/validation';
 import { AuthFormSchema as FormSchema } from '@/utils/types';
+import { signup } from '@/utils/api/authApi';
+import { useNavigate } from 'react-router-dom';
+import handleErr from '@/utils/handleErr';
 
 const schemas = {
     username: usernameSchema,
@@ -11,6 +14,8 @@ const schemas = {
 };
 
 const SignUpPage: React.FC = () => {
+    const navigate = useNavigate();
+
     const [form, setForm] = useState<FormSchema>({
         username: '',
         email: '',
@@ -21,6 +26,7 @@ const SignUpPage: React.FC = () => {
         email: undefined,
         password: undefined
     });
+    const [confirmError, setConfirmError] = useState<string>('');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -35,6 +41,8 @@ const SignUpPage: React.FC = () => {
     const handleConfirm = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        // TODO: if user is already logged in, redirect to home page
+
         const val = formSchema.safeParse(form);
         if (!val.success) {
             return setError(
@@ -48,7 +56,12 @@ const SignUpPage: React.FC = () => {
             );
         }
 
-        // TODO: send request to backend
+        try {
+            await signup(form.username, form.email, form.password);
+            navigate('/auth/login');
+        } catch (err) {
+            handleErr(err, setConfirmError);
+        }
     };
 
     return (
@@ -97,9 +110,10 @@ const SignUpPage: React.FC = () => {
                             />
                             <p className='w-full px-4 font-noto_sans_mono leading-5 tracking-tight'>{error.password}</p>
                         </div>
-                        <button type='submit' className='my-8 font-noto_sans_mono text-2xl'>
+                        <button type='submit' className='mt-8 font-noto_sans_mono text-2xl'>
                             confirm
                         </button>
+                        <p className='mb-8 px-4 font-noto_sans_mono leading-5 tracking-tight'>{confirmError}</p>
                     </form>
                     <a href='/auth/login' className='font-noto_sans_mono text-slate-400'>
                         already have an account?
