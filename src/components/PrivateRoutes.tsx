@@ -6,7 +6,7 @@ interface Props {
 }
 
 const PrivateRoutes: React.FC<Props> = ({ isAuth }: Props) => {
-    return isAuth ? <Outlet /> : <Navigate to='/login' />;
+    return isAuth ? <Outlet /> : <Navigate to='/auth/login' />;
 };
 
 export default PrivateRoutes;
