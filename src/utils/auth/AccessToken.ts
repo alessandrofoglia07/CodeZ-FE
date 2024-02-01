@@ -1,6 +1,6 @@
 import axios from '@/utils/api/axios';
 import Cookies from 'js-cookie';
-import RefreshToken from '@/utils/storage/RefreshToken';
+import RefreshToken from '@/utils/auth/RefreshToken';
 
 /**
  * AccessToken class to manage access token in cookies

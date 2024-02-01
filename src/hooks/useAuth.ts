@@ -1,6 +1,6 @@
-import AccessToken from '@/utils/storage/AccessToken';
-import RefreshToken from '@/utils/storage/RefreshToken';
-import User from '@/utils/storage/User';
+import AccessToken from '@/utils/auth/AccessToken';
+import RefreshToken from '@/utils/auth/RefreshToken';
+import User from '@/utils/auth/User';
 import { useEffect } from 'react';
 
 const useAuth = () => {
