@@ -22,7 +22,8 @@ const config = {
             },
             colors: {
                 primary: '#40A2D8',
-                secondary: '#141E2A'
+                secondary: '#141E2A',
+                'secondary-bg': '#151b2b'
             },
             padding: {
                 18: '4.5rem'

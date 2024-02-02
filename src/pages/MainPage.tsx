@@ -9,7 +9,7 @@ const MainPage: React.FC = () => {
                 <BgStars />
             </div>
             <Sidebar />
-            <main className='h-screen w-screen md:pl-18 -md:pt-16'></main>
+            <main className='mb-16 h-screen w-screen md:pl-18 -md:pt-16'></main>
         </div>
     );
 };

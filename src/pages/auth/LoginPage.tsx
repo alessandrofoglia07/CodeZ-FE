@@ -10,6 +10,7 @@ import handleErr from '@/utils/handleErr';
 
 type FormSchema = Omit<AuthFormSchema, 'username'>;
 
+// TODO: add google and github login
 const LoginPage: React.FC = () => {
     const [form, setForm] = useState<FormSchema>({
         email: '',
@@ -29,8 +30,8 @@ const LoginPage: React.FC = () => {
         try {
             const res = await login(form.email, form.password);
 
-            const { userId, email, username, accessToken, refreshToken } = res.data;
-            User.set({ userId, email, username });
+            const { email, username, accessToken, refreshToken } = res.data;
+            User.set({ email, username });
             AccessToken.set(accessToken);
             RefreshToken.set(refreshToken);
             window.location.href = '/';

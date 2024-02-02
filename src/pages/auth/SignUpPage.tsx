@@ -13,6 +13,7 @@ const schemas = {
     password: passwordSchema
 };
 
+// TODO: add google and github signup
 const SignUpPage: React.FC = () => {
     const navigate = useNavigate();
 
