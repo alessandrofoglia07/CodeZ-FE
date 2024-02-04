@@ -77,7 +77,7 @@ const SignUpPage: React.FC = () => {
                     <form onSubmit={handleConfirm} autoComplete='off' spellCheck='false' className='flex h-full w-full flex-col items-center gap-4 py-4'>
                         <div className='flex w-3/4 flex-col items-center md:w-2/3'>
                             <input
-                                className='h-12 w-full bg-transparent p-4 font-noto_sans_mono text-lg text-slate-100 focus-visible:outline-none'
+                                className='h-12 w-full bg-transparent p-4 font-noto_sans_mono text-lg text-slate-100'
                                 type='username'
                                 placeholder='Username'
                                 name='username'
@@ -89,7 +89,7 @@ const SignUpPage: React.FC = () => {
                         </div>
                         <div className='flex w-3/4 flex-col items-center md:w-2/3'>
                             <input
-                                className='h-12 w-full bg-transparent p-4 font-noto_sans_mono text-lg text-slate-100 focus-visible:outline-none'
+                                className='h-12 w-full bg-transparent p-4 font-noto_sans_mono text-lg text-slate-100'
                                 type='email'
                                 placeholder='Email'
                                 name='email'
@@ -101,7 +101,7 @@ const SignUpPage: React.FC = () => {
                         </div>
                         <div className='flex w-3/4 flex-col items-center md:w-2/3'>
                             <input
-                                className='h-12 w-full bg-transparent p-4 font-noto_sans_mono text-lg text-slate-100 focus-visible:outline-none'
+                                className='h-12 w-full bg-transparent p-4 font-noto_sans_mono text-lg text-slate-100'
                                 type='password'
                                 placeholder='Password'
                                 name='password'

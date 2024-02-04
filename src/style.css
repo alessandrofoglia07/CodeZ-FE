@@ -25,6 +25,18 @@
         font-synthesis: style;
     }
 
+    input,
+    textarea,
+    input:focus-visible,
+    textarea:focus-visible {
+        outline: none;
+    }
+
+    input:disabled::placeholder,
+    textarea:disabled::placeholder {
+        opacity: 0.4;
+    }
+
     @keyframes float1 {
         0% {
             transform: translateY(0px);
@@ -82,6 +94,10 @@
 }
 
 @layer utilities {
+    .fade-in {
+        opacity: 0;
+        animation: fadeIn 0.2s ease-in-out forwards;
+    }
     .fade-out {
         animation: fadeOut 0.5s ease-in-out;
     }

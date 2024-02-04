@@ -51,7 +51,7 @@ const LoginPage: React.FC = () => {
                     <h1 className='py-4 font-noto_sans_mono text-3xl font-bold'>login</h1>
                     <form onSubmit={handleConfirm} autoComplete='off' spellCheck='false' className='flex h-full w-full flex-col items-center gap-4 py-4'>
                         <input
-                            className='h-12 w-3/4 bg-transparent p-4 font-noto_sans_mono text-lg text-slate-100 focus-visible:outline-none md:w-2/3'
+                            className='h-12 w-3/4 bg-transparent p-4 font-noto_sans_mono text-lg text-slate-100 md:w-2/3'
                             type='email'
                             placeholder='Email'
                             name='email'
@@ -60,7 +60,7 @@ const LoginPage: React.FC = () => {
                             onChange={handleChange}
                         />
                         <input
-                            className='h-12 w-3/4 bg-transparent p-4 font-noto_sans_mono text-lg text-slate-100 focus-visible:outline-none md:w-2/3'
+                            className='h-12 w-3/4 bg-transparent p-4 font-noto_sans_mono text-lg text-slate-100 md:w-2/3'
                             type='password'
                             placeholder='Password'
                             name='password'

@@ -2,6 +2,7 @@ import React from 'react';
 import Logo from './Logo';
 import { GoHome } from 'react-icons/go';
 import { FaRegUser } from 'react-icons/fa';
+import { RxDashboard } from 'react-icons/rx';
 
 const Item = ({ icon, href }: { icon: React.ReactNode; href: string }) => {
     return (
@@ -22,6 +23,7 @@ const Sidebar: React.FC = () => {
             <Logo containerClassName='md:py-6 -md:pl-6 -md:pr-8 -md:pt-4' />
             <div className='flex h-full w-full items-center gap-8 md:flex-col'>
                 <Item icon={<GoHome />} href='/' />
+                <Item icon={<RxDashboard />} href='/dashboard' />
             </div>
             <a href='/user' className='grid place-items-center md:py-6 -md:pl-6 -md:pr-8'>
                 <FaRegUser className='text-2xl text-slate-400' />
