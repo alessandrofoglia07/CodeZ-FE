@@ -27,7 +27,7 @@ const SignUpPage: React.FC = () => {
         email: undefined,
         password: undefined
     });
-    const [confirmError, setConfirmError] = useState<string>('');
+    const [confirmError, setConfirmError] = useState<string | undefined>(undefined);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });

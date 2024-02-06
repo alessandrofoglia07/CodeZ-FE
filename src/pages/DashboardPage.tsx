@@ -5,6 +5,7 @@ import { ProjectDocument } from '@/utils/types';
 import Project from '@/components/Project';
 import { FaPlus } from 'react-icons/fa';
 import NewProjectModal from '@/components/NewProjectModal';
+import BgStars from '@/components/MainPageBg';
 
 const DashboardPage: React.FC = () => {
     const [projects, setProjects] = useState<ProjectDocument[]>([]);
@@ -21,8 +22,11 @@ const DashboardPage: React.FC = () => {
 
     return (
         <div>
+            <div id='bg' className='fixed -z-50 h-full w-full'>
+                <BgStars />
+            </div>
             <Sidebar />
-            <main className='min-h-screen bg-secondary-bg pb-16 md:pl-18 -md:pt-16'>
+            <main className='min-h-screen bg-secondary-bg/50 pb-16 md:pl-18 -md:pt-16'>
                 <h1 className='px-8 pb-12 pt-16 font-noto_sans_mono text-5xl font-extrabold tracking-tight'>Dashboard</h1>
                 <div className='flex h-full w-full flex-wrap gap-8 px-8 py-4'>
                     <button

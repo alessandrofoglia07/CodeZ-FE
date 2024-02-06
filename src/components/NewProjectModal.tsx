@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { IoClose } from 'react-icons/io5';
 import { projectNameSchema, projectDescriptionSchema, githubLinkSchema } from '@/utils/validation';
+import axios from '@/utils/api/authAxios';
+import { useNavigate } from 'react-router-dom';
+import handleErr from '@/utils/handleErr';
 
 interface Props {
     open: boolean;
@@ -13,13 +16,10 @@ interface Form {
     githubLink: string;
 }
 
-type Error = Partial<Form> & { creation?: string };
-
-const defaultError: Error = {
+const defaultError: Partial<Form> = {
     name: undefined,
     description: undefined,
-    githubLink: undefined,
-    creation: undefined
+    githubLink: undefined
 };
 
 const defaultForm: Form = {
@@ -29,18 +29,31 @@ const defaultForm: Form = {
 };
 
 const NewProjectModal: React.FC<Props> = ({ open, onClose }: Props) => {
+    const navigate = useNavigate();
+
     const [form, setForm] = useState<Form>(defaultForm);
-    const [error, setError] = useState<Error>(defaultError);
+    const [error, setError] = useState<Partial<Form>>(defaultError);
     const [inputWidth, setInputWidth] = useState<number>(0);
+    const [creationError, setCreationError] = useState<string | undefined>(undefined);
 
     const fixedWidthStyle: React.CSSProperties = { width: inputWidth };
 
     useEffect(() => {
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && open) handleClose();
-        });
+        window.addEventListener('keydown', handleEscape);
         window.addEventListener('resize', handleResize);
-    }, []);
+
+        const modal = document.getElementById('new-project-modal');
+        if (modal) modal.focus();
+
+        return () => {
+            window.removeEventListener('keydown', handleEscape);
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [open]);
+
+    const handleEscape = (e: KeyboardEvent) => {
+        if (e.key === 'Escape' && open) handleClose();
+    };
 
     const handleResize = () => {
         setInputWidth(document.getElementById('name')?.offsetWidth || 0);
@@ -50,39 +63,42 @@ const NewProjectModal: React.FC<Props> = ({ open, onClose }: Props) => {
         setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
-    const handleCreate = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         handleResize();
 
-        if (form.githubLink.length > 0) {
-            const val = githubLinkSchema.safeParse(form.githubLink);
+        try {
+            if (form.githubLink.length > 0) {
+                const val = githubLinkSchema.safeParse(form.githubLink);
 
-            if (!val.success) return setError((prev) => ({ ...prev, githubLink: val.error.errors[0]?.message || 'Invalid GitHub link' }));
+                if (!val.success) return setError((prev) => ({ ...prev, githubLink: val.error.errors[0]?.message || 'Invalid GitHub link' }));
 
-            // TODO: Clone the repository
+                const res = await axios.post('/projects/new/github', { githubLink: form.githubLink });
+                return navigate(`/projects/${res.data._id}`);
+            }
 
-            return;
+            const name = projectNameSchema.safeParse(form.name);
+            const description = projectDescriptionSchema.safeParse(form.description);
+
+            if (!name.success) setError((prev) => ({ ...prev, name: name.error.errors[0]?.message || 'Invalid name' }));
+            if (!description.success) setError((prev) => ({ ...prev, description: description.error.errors[0]?.message || 'Invalid description' }));
+
+            if (!name.success || !description.success) return;
+
+            setError((prev) => ({ ...prev, name: undefined, description: undefined }));
+
+            const res = await axios.post('/projects/new/empty', { name: form.name, description: form.description, collaborators: [] });
+            navigate(`/projects/${res.data._id}`);
+        } catch (err) {
+            handleErr(err, setCreationError);
         }
-
-        const name = projectNameSchema.safeParse(form.name);
-        const description = projectDescriptionSchema.safeParse(form.description);
-
-        if (!name.success) setError((prev) => ({ ...prev, name: name.error.errors[0]?.message || 'Invalid name' }));
-        if (!description.success) setError((prev) => ({ ...prev, description: description.error.errors[0]?.message || 'Invalid description' }));
-
-        if (!name.success || !description.success) return;
-
-        setError((prev) => ({ ...prev, name: undefined, description: undefined }));
-
-        // TODO: Create new project
-
-        return;
     };
 
     const handleClose = () => {
         onClose();
         setForm(defaultForm);
         setError(defaultError);
+        setCreationError(undefined);
     };
 
     if (!open) return null;
@@ -90,7 +106,9 @@ const NewProjectModal: React.FC<Props> = ({ open, onClose }: Props) => {
     return (
         <>
             <div onClick={handleClose} className='fade-in fixed inset-0 z-40 flex h-screen w-screen items-center justify-center bg-black/40 transition-all' />
-            <div className='center fade-in max-w-screen !fixed z-50 flex h-max max-h-screen w-max flex-col items-center overflow-auto rounded-lg bg-[radial-gradient(ellipse_at_bottom_right,_rgb(41_47_63)_0%,_#141E2A_100%)] px-8 py-16 md:min-w-[500px] -md:w-screen'>
+            <div
+                id='new-project-modal'
+                className='center fade-in max-w-screen !fixed z-50 flex h-max max-h-screen w-max flex-col items-center overflow-auto rounded-lg bg-[radial-gradient(ellipse_at_bottom_right,_rgba(41,_47,_63,_0.8)_0%,_#141e2a81_100%);] px-8 py-16 md:min-w-[500px] -md:w-screen'>
                 <button onClick={onClose} className='absolute right-4 top-4'>
                     <IoClose className='text-4xl text-slate-100' />
                 </button>
@@ -150,7 +168,7 @@ const NewProjectModal: React.FC<Props> = ({ open, onClose }: Props) => {
                     <button type='submit' className='mt-8 font-noto_sans_mono text-2xl'>
                         create
                     </button>
-                    {error.creation && <p className='mb-8 px-4 font-noto_sans_mono leading-5 tracking-tight'>{error.creation}</p>}
+                    {creationError && <p className='mb-8 px-4 font-noto_sans_mono leading-5 tracking-tight'>{creationError}</p>}
                 </form>
             </div>
         </>

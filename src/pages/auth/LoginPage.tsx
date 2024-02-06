@@ -16,7 +16,7 @@ const LoginPage: React.FC = () => {
         email: '',
         password: ''
     });
-    const [error, setError] = useState<string>('');
+    const [error, setError] = useState<string | undefined>(undefined);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
