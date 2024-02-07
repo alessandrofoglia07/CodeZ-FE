@@ -7,11 +7,16 @@ import User from '@/utils/auth/User';
 import AccessToken from '@/utils/auth/AccessToken';
 import RefreshToken from '@/utils/auth/RefreshToken';
 import handleErr from '@/utils/handleErr';
+import { useNavigate } from 'react-router-dom';
+import useAuth from '@/hooks/useAuth';
 
 type FormSchema = Omit<AuthFormSchema, 'username'>;
 
 // TODO: add google and github login
 const LoginPage: React.FC = () => {
+    const isAuth = useAuth();
+    const navigate = useNavigate();
+
     const [form, setForm] = useState<FormSchema>({
         email: '',
         password: ''
@@ -25,7 +30,7 @@ const LoginPage: React.FC = () => {
     const handleConfirm = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        // TODO: if user is already logged in, redirect to home page
+        if (isAuth) navigate('/dashboard');
 
         try {
             const res = await login(form.email, form.password);
@@ -34,7 +39,7 @@ const LoginPage: React.FC = () => {
             User.set({ email, username });
             AccessToken.set(accessToken);
             RefreshToken.set(refreshToken);
-            window.location.href = '/';
+            navigate('/dashboard');
         } catch (err) {
             handleErr(err, setError);
         }

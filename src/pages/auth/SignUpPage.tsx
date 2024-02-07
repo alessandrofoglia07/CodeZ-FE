@@ -6,6 +6,7 @@ import { AuthFormSchema as FormSchema } from '@/utils/types';
 import { signup } from '@/utils/api/authApi';
 import { useNavigate } from 'react-router-dom';
 import handleErr from '@/utils/handleErr';
+import useAuth from '@/hooks/useAuth';
 
 const schemas = {
     username: usernameSchema,
@@ -16,6 +17,7 @@ const schemas = {
 // TODO: add google and github signup
 const SignUpPage: React.FC = () => {
     const navigate = useNavigate();
+    const isAuth = useAuth();
 
     const [form, setForm] = useState<FormSchema>({
         username: '',
@@ -42,7 +44,7 @@ const SignUpPage: React.FC = () => {
     const handleConfirm = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        // TODO: if user is already logged in, redirect to home page
+        if (isAuth) navigate('/dashboard');
 
         const val = formSchema.safeParse(form);
         if (!val.success) {
