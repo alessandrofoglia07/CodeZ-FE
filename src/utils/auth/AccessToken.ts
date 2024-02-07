@@ -1,6 +1,8 @@
 import axios from '@/utils/api/axios';
 import Cookies from 'js-cookie';
 import RefreshToken from '@/utils/auth/RefreshToken';
+import logout from './logout';
+import { isAxiosError } from 'axios';
 
 /**
  * AccessToken class to manage access token in cookies
@@ -23,9 +25,16 @@ export default class AccessToken {
             refreshToken = RefreshToken.get();
             if (!refreshToken) throw new Error('No refresh token found');
         }
-        const res = await axios.post('/auth/refresh-token', { refreshToken });
-        const { accessToken } = res.data;
-        this.set(accessToken);
-        return accessToken;
+        try {
+            const res = await axios.post('/auth/refresh-token', { refreshToken });
+            const { accessToken } = res.data;
+            this.set(accessToken);
+            return accessToken;
+        } catch (err) {
+            if (isAxiosError(err) && err.response && err.response.status === 403) {
+                logout();
+            }
+            throw err;
+        }
     }
 }
