@@ -42,10 +42,15 @@ const NewProjectModal: React.FC<Props> = ({ open, onClose }: Props) => {
         window.addEventListener('keydown', handleEscape);
         window.addEventListener('resize', handleResize);
 
+        document.getElementById('name')?.addEventListener('keypress', handleEnterOnName);
+        document.getElementById('description')?.addEventListener('keypress', handleEnterOnDescription);
+
         const modal = document.getElementById('new-project-modal');
         if (modal) modal.focus();
 
         return () => {
+            document.getElementById('name')?.removeEventListener('keypress', handleEnterOnName);
+            document.getElementById('description')?.removeEventListener('keypress', handleEnterOnDescription);
             window.removeEventListener('keydown', handleEscape);
             window.removeEventListener('resize', handleResize);
         };
@@ -53,6 +58,18 @@ const NewProjectModal: React.FC<Props> = ({ open, onClose }: Props) => {
 
     const handleEscape = (e: KeyboardEvent) => {
         if (e.key === 'Escape' && open) handleClose();
+    };
+
+    const handleEnterOnName = (e: KeyboardEvent) => {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+        document.getElementById('description')?.focus();
+    };
+
+    const handleEnterOnDescription = (e: KeyboardEvent) => {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+        document.querySelector('form')?.dispatchEvent(new Event('submit', { bubbles: true }));
     };
 
     const handleResize = () => {
@@ -73,7 +90,7 @@ const NewProjectModal: React.FC<Props> = ({ open, onClose }: Props) => {
 
                 if (!val.success) return setError((prev) => ({ ...prev, githubLink: val.error.errors[0]?.message || 'Invalid GitHub link' }));
 
-                const res = await axios.post('/projects/new/github', { githubLink: form.githubLink });
+                const res = await axios.post('/projects/new/github', { githubLink: form.githubLink, collaborators: [] });
                 return navigate(`/projects/${res.data._id}`);
             }
 
