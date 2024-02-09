@@ -6,6 +6,7 @@ import SignUpPage from '@/pages/auth/SignUpPage';
 import useAuth from '@/hooks/useAuth';
 import PrivateRoutes from './PrivateRoutes';
 import DashboardPage from '@/pages/DashboardPage';
+import ProjectPage from '@/pages/ProjectPage';
 
 const App: React.FC = () => {
     const isAuth = useAuth();
@@ -22,6 +23,7 @@ const App: React.FC = () => {
             {/* Private routes */}
             <Route element={<PrivateRoutes isAuth={isAuth} />}>
                 <Route path='/dashboard' element={<DashboardPage />} />
+                <Route path='/projects/:id' element={<ProjectPage />} />
             </Route>
         </Routes>
     );
