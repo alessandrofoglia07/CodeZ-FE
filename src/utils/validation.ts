@@ -22,4 +22,7 @@ export const projectDescriptionLengthErr = 'Description must be between 1 and 30
 
 export const projectNameSchema = z.string().min(1, projectNameLengthErr).max(30, projectNameLengthErr);
 export const projectDescriptionSchema = z.string().min(1, projectDescriptionLengthErr).max(300, projectDescriptionLengthErr);
-export const githubLinkSchema = z.string().url('Invalid URL').regex(/^https:\/\/github\.com\/[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+\.git$/, 'Link must be a GitHub repository');
+export const githubLinkSchema = z
+    .string()
+    .url('Invalid URL')
+    .regex(/^https:\/\/github\.com\/[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+\.git$/, 'Link must be a GitHub repository');
