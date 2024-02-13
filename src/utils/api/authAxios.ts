@@ -35,6 +35,7 @@ api.interceptors.response.use(
                 return api(originalConfig);
             } catch (err) {
                 logout();
+                window.location.reload();
                 throw err;
             }
         }

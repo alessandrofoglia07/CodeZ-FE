@@ -4,8 +4,10 @@ import { authFormSchema } from '@/utils/validation';
 export type AuthFormSchema = z.infer<typeof authFormSchema>;
 
 export interface UserInfo {
-    email: string;
+    userId: string;
+    email?: string;
     username: string;
+    profile_img?: string;
 }
 
 export interface ProjectDocument {

@@ -13,13 +13,6 @@ module.exports = {
     plugins: ['react-refresh'],
     rules: {
         'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-        'no-restricted-imports': [
-            'error',
-            {
-                // In case you want to use `@mui/material`:
-                patterns: ['@mui/*/*/*']
-            }
-        ],
         'react-hooks/exhaustive-deps': 'off'
     }
 };

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Logo from './Logo';
 import { GoHome } from 'react-icons/go';
 import { FaRegUser } from 'react-icons/fa';
 import { RxDashboard } from 'react-icons/rx';
+import { AuthContext } from '@/context/AuthContext';
 
 const Item = ({ icon, href }: { icon: React.ReactNode; href: string }) => {
     return (
@@ -16,6 +17,8 @@ const Item = ({ icon, href }: { icon: React.ReactNode; href: string }) => {
 };
 
 const Sidebar: React.FC = () => {
+    const { isAuth, userData } = useContext(AuthContext)!;
+
     return (
         <aside
             id='Sidebar'
@@ -25,9 +28,14 @@ const Sidebar: React.FC = () => {
                 <Item icon={<GoHome />} href='/' />
                 <Item icon={<RxDashboard />} href='/dashboard' />
             </div>
-            <a href='/user' className='grid place-items-center md:py-6 -md:pl-6 -md:pr-8'>
-                <FaRegUser className='text-2xl text-slate-400' />
-            </a>
+            {!isAuth ? (
+                // Start the GitHub OAuth flow
+                <a href={`${import.meta.env.VITE_API_URL}/auth/github?redirect=${window.location.href}`} className='grid place-items-center md:py-6 -md:pl-6 -md:pr-8'>
+                    <FaRegUser className='text-2xl text-slate-400' />
+                </a>
+            ) : (
+                <img src={userData?.profile_img} className='aspect-square w-10 rounded-full border border-slate-700 shadow-md md:my-6 md:w-2/3 -md:ml-6 -md:mr-8' />
+            )}
         </aside>
     );
 };
