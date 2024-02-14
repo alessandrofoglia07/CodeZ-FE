@@ -7,7 +7,7 @@ import { FaPlus } from 'react-icons/fa';
 import NewProjectModal from '@/components/NewProjectModal';
 import BgStars from '@/components/MainPageBg';
 
-const DashboardPage: React.FC = () => {
+const CodePage: React.FC = () => {
     const [projects, setProjects] = useState<ProjectDocument[]>([]);
     const [creatingProject, setCreatingProject] = useState(false);
 
@@ -44,4 +44,4 @@ const DashboardPage: React.FC = () => {
     );
 };
 
-export default DashboardPage;
+export default CodePage;
