@@ -26,7 +26,8 @@ const Sidebar: React.FC = () => {
             <Logo containerClassName='md:py-6 -md:pl-6 -md:pr-8 -md:pt-4' />
             <div className='flex h-full w-full items-center gap-8 md:flex-col'>
                 <Item icon={<GoHome />} href='/' />
-                <Item icon={<RxDashboard />} href='/dashboard' />
+                {/* TODO: Change this icon for UX */}
+                <Item icon={<RxDashboard />} href='/code' />
             </div>
             {!isAuth ? (
                 // Start the GitHub OAuth flow

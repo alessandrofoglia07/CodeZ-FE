@@ -19,9 +19,11 @@
         "docker-run:prod": "docker run -it --rm -p 8080:80 --name create-modern-react-pwa -d create-modern-react-pwa-prod"
     },
     "dependencies": {
+        "@dnd-kit/core": "^6.1.0",
         "@headlessui/react": "^1.7.18",
         "axios": "^1.6.7",
         "js-cookie": "^3.0.5",
+        "re-resizable": "^6.9.11",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-icons": "^5.0.1",
