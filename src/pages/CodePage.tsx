@@ -1,24 +1,25 @@
 import Sidebar from '@/components/Sidebar';
-import React, { useState, useEffect } from 'react';
-import axios from '@/utils/api/authAxios';
-import { ProjectDocument } from '@/utils/types';
-import NewProjectModal from '@/components/NewProjectModal';
+import React, { useState } from 'react';
 import BgStars from '@/components/MainPageBg';
-import Editor from '@/components/Editor';
+// import Editor from '@/components/Editor';
 import ExplorerBar from '@/components/ExplorerBar';
+import DropZone from '@/components/DropZone';
+import { DndContext, DragEndEvent, UniqueIdentifier, useSensors, useSensor, PointerSensor, TouchSensor } from '@dnd-kit/core';
 
 const CodePage: React.FC = () => {
-    const [projects, setProjects] = useState<ProjectDocument[]>([]);
-    const [creatingProject, setCreatingProject] = useState(false);
+    const containers = ['A', 'B'];
+    const [parent, setParent] = useState<UniqueIdentifier | null>(null);
 
-    const fetchProjects = async () => {
-        const res = await axios.get('/projects');
-        setProjects(res.data);
+    const handleDragEnd = (e: DragEndEvent) => {
+        const { over, active } = e;
+        if (active.id === over?.id) return;
+
+        setParent(over ? over.id : null);
     };
 
-    useEffect(() => {
-        fetchProjects();
-    }, []);
+    const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor));
+
+    // TODO: FIX THIS
 
     return (
         <div>
@@ -27,10 +28,19 @@ const CodePage: React.FC = () => {
             </div>
             <Sidebar />
             <main className='h-screen overflow-hidden bg-secondary-bg/50 pb-16 md:pl-18 -md:pt-16'>
-                <ExplorerBar />
-                <Editor />
+                <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+                    {parent === null ? <ExplorerBar /> : null}
+                    {containers.map((id, i) => (
+                        <DropZone key={id} id={id} position={i % 2 === 0 ? 'l' : 'r'}>
+                            {parent === id ? <ExplorerBar /> : null}
+                        </DropZone>
+                    ))}
+                    {/* <DropZone />
+                    <ExplorerBar />
+                    <Editor />
+                    <DropZone position='r' /> */}
+                </DndContext>
             </main>
-            <NewProjectModal open={creatingProject} onClose={() => setCreatingProject(false)} />
         </div>
     );
 };

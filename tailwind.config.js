@@ -33,6 +33,9 @@ const config = {
             },
             width: {
                 18: '4.5rem'
+            },
+            animation: {
+                'opacity-explorer-bar': 'opacity-explorer-bar 0.5s ease-in-out forwards'
             }
         }
     },
