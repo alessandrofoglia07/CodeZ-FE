@@ -21,3 +21,5 @@ export interface ProjectDocument {
     createdAt: string;
     updatedAt: string;
 }
+
+export type Position = 'l' | 'r';

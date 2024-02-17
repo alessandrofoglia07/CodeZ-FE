@@ -1,22 +1,31 @@
+import { Position } from '@/utils/types';
 import React, { PropsWithChildren } from 'react';
-import { useDroppable } from '@dnd-kit/core';
 
 interface Props extends PropsWithChildren {
-    position?: 'l' | 'r';
-    id?: string;
+    position?: Position;
+    onDrop?: (e: React.DragEvent<HTMLDivElement>, el: Position) => void;
+    onDragOver?: (e: React.DragEvent<HTMLDivElement>, el: Position) => void;
+    isOver?: boolean;
 }
 
-const DropZone: React.FC<Props> = ({ position = 'l', children, id }: Props) => {
-    const { isOver, setNodeRef } = useDroppable({
-        id: id || 'drop-zone'
-    });
+const DropZone: React.FC<Props> = ({ position = 'l', onDragOver, onDrop, isOver, children }: Props) => {
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        onDrop && onDrop(e, position);
+    };
 
-    const style = {
-        backgroundColor: isOver ? 'rgb(51 65 85 / 0.6)' : 'transparent'
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onDragOver && onDragOver(e, position);
     };
 
     return (
-        <div className={`fixed top-0 -z-50 h-screen w-64 ${position === 'l' ? 'left-auto' : 'right-0'}`} style={style} ref={setNodeRef}>
+        <div
+            id={`drop-zone-${position}`}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            className={`absolute top-0 h-screen w-64 ${position === 'l' ? 'left-auto' : 'right-0'} ${isOver ? 'bg-slate-600' : 'bg-transparent'}`}>
             {children}
         </div>
     );

@@ -1,39 +1,48 @@
 import React from 'react';
 import { Resizable } from 're-resizable';
-import { useDraggable } from '@dnd-kit/core';
+import { Position } from '@/utils/types';
 
 interface Props {
-    id?: string;
+    parent: Position;
+    onDragStart: (e: React.DragEvent<HTMLDivElement>) => void;
+    onDragEnd: (e: React.DragEvent<HTMLDivElement>) => void;
 }
 
-const ExplorerBar: React.FC<Props> = ({ id }: Props) => {
-    const { attributes, listeners, setNodeRef, transform } = useDraggable({
-        id: id || 'draggable-explorer-bar'
-    });
+const ExplorerBar: React.FC<Props> = ({ parent, onDragStart, onDragEnd }: Props) => {
+    const handleStyles =
+        parent === 'r'
+            ? {
+                  left: {
+                      width: '4px',
+                      cursor: 'w-resize'
+                  }
+              }
+            : {
+                  right: {
+                      width: '4px',
+                      cursor: 'e-resize'
+                  }
+              };
 
-    const style = transform
-        ? {
-              transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`
-          }
-        : undefined;
+    const handleClasses =
+        parent === 'r'
+            ? {
+                  left: 'h-screen bg-gray-600 pl-2 opacity-0 hover:animate-opacity-explorer-bar active:animate-opacity-explorer-bar'
+              }
+            : {
+                  right: 'h-screen bg-gray-600 pr-2 opacity-0 hover:animate-opacity-explorer-bar active:animate-opacity-explorer-bar'
+              };
+
+    const enable = parent === 'r' ? { left: true } : { right: true };
 
     return (
-        <div className='flex h-screen w-max' ref={setNodeRef} style={style} {...listeners} {...attributes}>
-            <Resizable
-                defaultSize={{ width: 300, height: '100vh' }}
-                minWidth={150}
-                maxWidth='80%'
-                enable={{ right: true }}
-                handleStyles={{
-                    right: {
-                        width: '4px',
-                        cursor: 'w-resize'
-                    }
-                }}
-                handleClasses={{
-                    right: 'h-screen bg-gray-600 pl-2 opacity-0 hover:animate-opacity-explorer-bar active:animate-opacity-explorer-bar'
-                }}>
-                <div className='z-50 h-screen border-r border-gray-400/50 bg-slate-800/70'>Hello world</div>
+        <div className={`absolute top-0 flex h-screen w-screen ${parent === 'r' ? 'right-0 justify-end' : 'left-0 justify-start'}`}>
+            <Resizable defaultSize={{ width: 300, height: '100vh' }} minWidth={150} maxWidth='80%' enable={enable} handleStyles={handleStyles} handleClasses={handleClasses}>
+                <div className={`z-50 h-screen border-gray-400/50 bg-slate-800/70 ${parent === 'r' ? 'border-l' : 'border-r'}`}>
+                    <div onDragStart={onDragStart} onDragEnd={onDragEnd} draggable className='w-full px-6 py-4'>
+                        <h2 className='font-noto_sans_mono text-lg font-bold tracking-tight'>Explorer</h2>
+                    </div>
+                </div>
             </Resizable>
         </div>
     );

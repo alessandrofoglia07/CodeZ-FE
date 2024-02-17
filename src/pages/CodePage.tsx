@@ -1,25 +1,47 @@
 import Sidebar from '@/components/Sidebar';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BgStars from '@/components/MainPageBg';
 // import Editor from '@/components/Editor';
 import ExplorerBar from '@/components/ExplorerBar';
 import DropZone from '@/components/DropZone';
-import { DndContext, DragEndEvent, UniqueIdentifier, useSensors, useSensor, PointerSensor, TouchSensor } from '@dnd-kit/core';
+import { Position } from '@/utils/types';
 
 const CodePage: React.FC = () => {
-    const containers = ['A', 'B'];
-    const [parent, setParent] = useState<UniqueIdentifier | null>(null);
+    const [explorerParent, setExplorerParent] = useState<Position>('l');
+    const [isDragging, setIsDragging] = useState(false);
+    const [isOver, setIsOver] = useState<Position | null>(null);
 
-    const handleDragEnd = (e: DragEndEvent) => {
-        const { over, active } = e;
-        if (active.id === over?.id) return;
-
-        setParent(over ? over.id : null);
+    const handleDragStart = () => {
+        setIsDragging(true);
     };
 
-    const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor));
+    const handleDragEnd = () => {
+        setIsDragging(false);
+        setExplorerParent((prev) => (isOver ? isOver : prev));
+    };
 
-    // TODO: FIX THIS
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>, el: Position) => {
+        e.preventDefault();
+        if (isDragging) {
+            setIsOver(el);
+        }
+    };
+
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>, el: Position) => {
+        e.stopPropagation();
+        e.preventDefault();
+        setIsDragging(false);
+        setExplorerParent(el);
+    };
+
+    useEffect(() => {
+        if (!isDragging) {
+            setIsOver(null);
+        }
+    }, [isDragging]);
+
+    // TODO: fix this it won't switch back from right to left
+    // TODO: make this also handle Editor component
 
     return (
         <div>
@@ -28,18 +50,12 @@ const CodePage: React.FC = () => {
             </div>
             <Sidebar />
             <main className='h-screen overflow-hidden bg-secondary-bg/50 pb-16 md:pl-18 -md:pt-16'>
-                <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-                    {parent === null ? <ExplorerBar /> : null}
-                    {containers.map((id, i) => (
-                        <DropZone key={id} id={id} position={i % 2 === 0 ? 'l' : 'r'}>
-                            {parent === id ? <ExplorerBar /> : null}
-                        </DropZone>
-                    ))}
-                    {/* <DropZone />
-                    <ExplorerBar />
-                    <Editor />
-                    <DropZone position='r' /> */}
-                </DndContext>
+                <DropZone onDragOver={(e) => handleDragOver(e, 'l')} isOver={isOver === 'l'}>
+                    {explorerParent === 'l' ? <ExplorerBar onDragStart={handleDragStart} onDragEnd={handleDragEnd} parent={explorerParent} /> : null}
+                </DropZone>
+                <DropZone position='r' onDragOver={(e) => handleDragOver(e, 'r')} isOver={isOver === 'r'} onDrop={handleDrop}>
+                    {explorerParent === 'r' ? <ExplorerBar onDragStart={handleDragStart} onDragEnd={handleDragEnd} parent={explorerParent} /> : null}
+                </DropZone>
             </main>
         </div>
     );
