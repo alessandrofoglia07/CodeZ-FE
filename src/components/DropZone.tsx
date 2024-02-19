@@ -6,9 +6,10 @@ interface Props extends PropsWithChildren {
     onDrop?: (e: React.DragEvent<HTMLDivElement>, el: Position) => void;
     onDragOver?: (e: React.DragEvent<HTMLDivElement>, el: Position) => void;
     isOver?: boolean;
+    isParent?: boolean;
 }
 
-const DropZone: React.FC<Props> = ({ position = 'l', onDragOver, onDrop, isOver, children }: Props) => {
+const DropZone: React.FC<Props> = ({ position = 'l', onDragOver, onDrop, isOver, isParent, children }: Props) => {
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         onDrop && onDrop(e, position);
@@ -25,7 +26,7 @@ const DropZone: React.FC<Props> = ({ position = 'l', onDragOver, onDrop, isOver,
             id={`drop-zone-${position}`}
             onDrop={handleDrop}
             onDragOver={handleDragOver}
-            className={`absolute top-0 h-screen w-64 ${position === 'l' ? 'left-auto' : 'right-0'} ${isOver ? 'bg-slate-600' : 'bg-transparent'}`}>
+            className={`absolute ${isParent ? 'z-0' : 'z-10'} top-0 h-screen w-64 ${position === 'l' ? 'left-auto' : 'right-0'} ${isOver ? 'bg-slate-600' : 'bg-transparent'}`}>
             {children}
         </div>
     );

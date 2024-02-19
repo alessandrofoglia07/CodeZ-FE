@@ -40,7 +40,6 @@ const CodePage: React.FC = () => {
         }
     }, [isDragging]);
 
-    // TODO: fix this it won't switch back from right to left
     // TODO: make this also handle Editor component
 
     return (
@@ -50,10 +49,10 @@ const CodePage: React.FC = () => {
             </div>
             <Sidebar />
             <main className='h-screen overflow-hidden bg-secondary-bg/50 pb-16 md:pl-18 -md:pt-16'>
-                <DropZone onDragOver={(e) => handleDragOver(e, 'l')} isOver={isOver === 'l'}>
+                <DropZone onDragOver={(e) => handleDragOver(e, 'l')} isOver={isOver === 'l'} isParent={explorerParent === 'l'}>
                     {explorerParent === 'l' ? <ExplorerBar onDragStart={handleDragStart} onDragEnd={handleDragEnd} parent={explorerParent} /> : null}
                 </DropZone>
-                <DropZone position='r' onDragOver={(e) => handleDragOver(e, 'r')} isOver={isOver === 'r'} onDrop={handleDrop}>
+                <DropZone position='r' onDragOver={(e) => handleDragOver(e, 'r')} isOver={isOver === 'r'} isParent={explorerParent === 'r'} onDrop={handleDrop}>
                     {explorerParent === 'r' ? <ExplorerBar onDragStart={handleDragStart} onDragEnd={handleDragEnd} parent={explorerParent} /> : null}
                 </DropZone>
             </main>
