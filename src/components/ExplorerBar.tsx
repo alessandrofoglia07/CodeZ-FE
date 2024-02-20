@@ -1,14 +1,15 @@
 import React from 'react';
-import { Resizable } from 're-resizable';
+import { Resizable, ResizeCallback } from 're-resizable';
 import { Position } from '@/utils/types';
 
 interface Props {
     parent: Position;
     onDragStart: (e: React.DragEvent<HTMLDivElement>) => void;
     onDragEnd: (e: React.DragEvent<HTMLDivElement>) => void;
+    onResize: ResizeCallback;
 }
 
-const ExplorerBar: React.FC<Props> = ({ parent, onDragStart, onDragEnd }: Props) => {
+const ExplorerBar: React.FC<Props> = ({ parent, onDragStart, onDragEnd, onResize }: Props) => {
     const handleStyles =
         parent === 'r'
             ? {
@@ -37,8 +38,15 @@ const ExplorerBar: React.FC<Props> = ({ parent, onDragStart, onDragEnd }: Props)
 
     return (
         <div className={`absolute top-0 flex h-screen w-screen ${parent === 'r' ? 'right-0 justify-end' : 'left-0 justify-start'}`}>
-            <Resizable defaultSize={{ width: 300, height: '100vh' }} minWidth={150} maxWidth='80%' enable={enable} handleStyles={handleStyles} handleClasses={handleClasses}>
-                <div className={`z-50 h-screen border-gray-400/50 bg-slate-800/70 ${parent === 'r' ? 'border-l' : 'border-r'}`}>
+            <Resizable
+                defaultSize={{ width: 300, height: '100vh' }}
+                minWidth={150}
+                maxWidth='80%'
+                enable={enable}
+                handleStyles={handleStyles}
+                handleClasses={handleClasses}
+                onResize={onResize}>
+                <div id='resizable-bar' className={`z-50 h-screen border-gray-400/50 bg-slate-800/70 ${parent === 'r' ? 'border-l' : 'border-r'}`}>
                     <div onDragStart={onDragStart} onDragEnd={onDragEnd} draggable className='w-full px-6 py-4'>
                         <h2 className='font-noto_sans_mono text-lg font-bold tracking-tight'>Explorer</h2>
                     </div>
