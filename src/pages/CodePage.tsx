@@ -21,10 +21,10 @@ const CodePage: React.FC = () => {
         setIsDragging(false);
         setExplorerParent((prev) => {
             if (isOver) {
-                handleResize(undefined, isOver);
+                handleEditorWindowResizeDelay(undefined, isOver);
                 return isOver;
             }
-            handleResize(undefined, explorerParentState);
+            handleEditorWindowResizeDelay(undefined, explorerParentState);
             return prev;
         });
     };
@@ -40,7 +40,7 @@ const CodePage: React.FC = () => {
         e.preventDefault();
         setIsDragging(false);
         setExplorerParent(el);
-        handleResize(undefined, el);
+        handleEditorWindowResizeDelay(undefined, el);
     };
 
     useEffect(() => {
@@ -49,10 +49,14 @@ const CodePage: React.FC = () => {
         }
     }, [isDragging]);
 
-    const handleResize = (e?: MouseEvent | TouchEvent, specificParent?: Position) => {
-        e?.preventDefault();
+    const handleEditorWindowResizeDelay = (e?: MouseEvent | TouchEvent, specificParent?: Position) => {
+        setTimeout(() => {
+            handleEditorWindowResize(e, specificParent);
+        }, 0);
+    };
 
-        // TODO: fix bug: resize explorer bar, then move it to the other side => editor width is not updated
+    const handleEditorWindowResize = (e?: MouseEvent | TouchEvent, specificParent?: Position) => {
+        e?.preventDefault();
 
         const el = document.getElementById('resizable-bar');
         if (!el) return;
@@ -66,9 +70,9 @@ const CodePage: React.FC = () => {
     };
 
     useEffect(() => {
-        handleResize();
-        window.addEventListener('resize', () => handleResize());
-        return () => window.removeEventListener('resize', () => handleResize());
+        handleEditorWindowResize();
+        window.addEventListener('resize', () => handleEditorWindowResize());
+        return () => window.removeEventListener('resize', () => handleEditorWindowResize());
     }, []);
 
     // TODO: make this also handle Editor component
@@ -82,13 +86,13 @@ const CodePage: React.FC = () => {
             <main className='h-screen overflow-hidden bg-secondary-bg/50 pb-16 md:pl-18 -md:pt-16'>
                 <DropZone onDragOver={(e) => handleDragOver(e, 'l')} isOver={isOver === 'l'} isParent={explorerParentState === 'l'}>
                     {explorerParentState === 'l' ? (
-                        <ExplorerBar onDragStart={handleDragStart} onDragEnd={handleDragEnd} parent={explorerParentState} onResize={(e) => handleResize(e)} />
+                        <ExplorerBar onDragStart={handleDragStart} onDragEnd={handleDragEnd} parent={explorerParentState} onResize={(e) => handleEditorWindowResize(e)} />
                     ) : null}
                 </DropZone>
                 <Editor w={editorWidth} left={editorLeft} />
                 <DropZone position='r' onDragOver={(e) => handleDragOver(e, 'r')} isOver={isOver === 'r'} isParent={explorerParentState === 'r'} onDrop={handleDrop}>
                     {explorerParentState === 'r' ? (
-                        <ExplorerBar onDragStart={handleDragStart} onDragEnd={handleDragEnd} parent={explorerParentState} onResize={(e) => handleResize(e)} />
+                        <ExplorerBar onDragStart={handleDragStart} onDragEnd={handleDragEnd} parent={explorerParentState} onResize={(e) => handleEditorWindowResize(e)} />
                     ) : null}
                 </DropZone>
             </main>
