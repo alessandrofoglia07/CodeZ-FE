@@ -17,7 +17,7 @@ const Editor: React.FC<Props> = ({ w, left }: Props) => {
         setEditorLeft(left);
     }, [left]);
 
-    return width && editorLeft ? <div id='Editor' style={{ width, left: editorLeft }} className='fixed h-screen bg-red-500'></div> : null;
+    return width && editorLeft ? <div id='Editor' style={{ width, left: editorLeft }} className='fixed h-screen'></div> : null;
 };
 
 export default Editor;
