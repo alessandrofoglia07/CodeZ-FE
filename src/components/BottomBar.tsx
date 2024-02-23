@@ -1,3 +1,4 @@
+import CodeEditorDimensionsStorage from '@/utils/localStorage/CodeEditorDimensions';
 import { Position } from '@/utils/types';
 import { Resizable, ResizeCallback, ResizeStartCallback } from 're-resizable';
 import React, { useEffect } from 'react';
@@ -20,7 +21,7 @@ const BottomBar: React.FC<Props> = ({ w, explorerParentState, onResize, onResize
     return (
         <div className='absolute bottom-0' style={{ width, right: explorerParentState === 'l' ? 0 : undefined, left: explorerParentState === 'r' ? 72 : undefined }}>
             <Resizable
-                defaultSize={{ width: '100%', height: 280 }}
+                defaultSize={{ width: '100%', height: CodeEditorDimensionsStorage.get()?.bottomBar?.height || 280 }}
                 minHeight={50}
                 maxHeight='80vh'
                 enable={{ top: true }}

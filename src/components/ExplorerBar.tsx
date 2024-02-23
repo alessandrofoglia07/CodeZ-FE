@@ -1,6 +1,7 @@
 import React from 'react';
 import { Resizable, ResizeCallback, ResizeStartCallback } from 're-resizable';
 import { Position } from '@/utils/types';
+import CodeEditorDimensionsStorage from '@/utils/localStorage/CodeEditorDimensions';
 
 interface Props {
     parent: Position;
@@ -41,7 +42,7 @@ const ExplorerBar: React.FC<Props> = ({ parent, onDragStart, onDragEnd, onResize
     return (
         <div className={`absolute top-0 flex h-screen w-screen ${parent === 'r' ? 'right-0 justify-end' : 'left-0 justify-start'}`}>
             <Resizable
-                defaultSize={{ width: 300, height: '100vh' }}
+                defaultSize={{ width: CodeEditorDimensionsStorage.get()?.explorerBar?.width || 250, height: '100vh' }}
                 minWidth={150}
                 maxWidth='80%'
                 enable={enable}

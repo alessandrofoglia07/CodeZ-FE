@@ -6,6 +6,7 @@ import ExplorerBar from '@/components/ExplorerBar';
 import DropZone from '@/components/DropZone';
 import { Position } from '@/utils/types';
 import BottomBar from '@/components/BottomBar';
+import CodeEditorDimensionsStorage from '@/utils/localStorage/CodeEditorDimensions';
 
 interface Dimension {
     width: number | string;
@@ -13,7 +14,8 @@ interface Dimension {
 }
 
 const CodePage: React.FC = () => {
-    const [explorerParentState, setExplorerParent] = useState<Position | null>('l');
+    const parent = CodeEditorDimensionsStorage.get()?.explorerBar?.parent;
+    const [explorerParentState, setExplorerParent] = useState<Position | null>(parent !== undefined ? parent : 'l');
     const [isDragging, setIsDragging] = useState(false);
     const [isOver, setIsOver] = useState<Position | null>(null);
     const [editorDimensions, setEditorDimensions] = useState<Dimension>({ width: window.innerWidth / 2 - 72, height: '100vh' });
@@ -30,9 +32,13 @@ const CodePage: React.FC = () => {
         setExplorerParent((prev) => {
             if (isOver) {
                 handleEditorWindowResizeDelay(undefined, isOver);
+                const explorerW = document.getElementById('inner-sidebar')?.getBoundingClientRect().width;
+                CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW || 200, parent: isOver } });
                 return isOver;
             }
             handleEditorWindowResizeDelay(undefined, explorerParentState || undefined);
+            const explorerW = document.getElementById('inner-sidebar')?.getBoundingClientRect().width;
+            CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW || 200, parent: explorerParentState || null } });
             return prev;
         });
     };
@@ -48,6 +54,8 @@ const CodePage: React.FC = () => {
         e.preventDefault();
         setIsDragging(false);
         setExplorerParent(el);
+        const explorerW = document.getElementById('inner-sidebar')?.getBoundingClientRect().width;
+        CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW || 200, parent: el } });
         handleEditorWindowResizeDelay(undefined, el);
     };
 
@@ -67,26 +75,46 @@ const CodePage: React.FC = () => {
         window.removeEventListener('mousemove', () => {
             mousePos.current = [0, 0];
         });
+        const explorerW = document.getElementById('inner-sidebar')?.getBoundingClientRect().width;
+        const bottomBarH = document.getElementById('bottom-bar')?.getBoundingClientRect().height;
+        if (explorerW) {
+            CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW, parent: explorerParentState } });
+        }
+        if (bottomBarH) {
+            CodeEditorDimensionsStorage.set({ bottomBar: { height: bottomBarH } });
+        }
     };
+
+    const setEditorDimensionsToFull = () => {
+        setEditorDimensions((prev) => {
+            return { ...prev, width: window.innerWidth - 72 };
+        });
+        setEditorLeft(72);
+    }
 
     const handleExplorerResize = (e: MouseEvent | TouchEvent, direction: string) => {
         handleEditorWindowResize(e);
 
         if (direction.split('')[0] === explorerParentState) return;
 
-        const explorerW = document.getElementById('resizable-bar')?.getBoundingClientRect().width;
+        const explorerW = document.getElementById('inner-sidebar')?.getBoundingClientRect().width;
         if (!explorerW) return;
+
         const sidebarWidth = 72;
 
         switch (explorerParentState) {
             case 'l':
                 if (mousePos.current[0] - sidebarWidth < explorerW / 2 - 35) {
                     setExplorerParent(null);
+                    CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW, parent: null } });
+                    setEditorDimensionsToFull()
                 }
                 break;
             case 'r':
                 if (window.innerWidth - mousePos.current[0] - sidebarWidth < explorerW / 2 - 35) {
                     setExplorerParent(null);
+                    CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW, parent: null } });
+                    setEditorDimensionsToFull()
                 }
                 break;
         }
@@ -112,6 +140,8 @@ const CodePage: React.FC = () => {
             });
             const explorerParent = specificParent ? specificParent : explorerParentState;
             setEditorLeft(explorerParent === 'l' ? explorerW + sidebarWidth : sidebarWidth);
+        } else {
+            setEditorDimensionsToFull()
         }
 
         if (elY) {
