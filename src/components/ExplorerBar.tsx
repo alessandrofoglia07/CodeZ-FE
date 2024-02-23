@@ -50,7 +50,7 @@ const ExplorerBar: React.FC<Props> = ({ parent, onDragStart, onDragEnd, onResize
                 onResize={onResize}
                 onResizeStart={onResizeStart}
                 onResizeStop={onResizeStop}>
-                <div id='resizable-bar' className={`z-50 h-screen border-gray-400/50 bg-slate-800/70 ${parent === 'r' ? 'border-l' : 'border-r'}`}>
+                <div id='inner-sidebar' className={`z-50 h-screen border-gray-400/50 bg-slate-800/70 ${parent === 'r' ? 'border-l' : 'border-r'}`}>
                     <div onDragStart={onDragStart} onDragEnd={onDragEnd} draggable className='w-full px-6 py-4'>
                         <h2 className='font-jetbrains_mono text-lg font-bold tracking-tight'>Explorer</h2>
                     </div>

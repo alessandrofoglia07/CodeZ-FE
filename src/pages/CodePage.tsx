@@ -5,12 +5,18 @@ import Editor from '@/components/Editor';
 import ExplorerBar from '@/components/ExplorerBar';
 import DropZone from '@/components/DropZone';
 import { Position } from '@/utils/types';
+import BottomBar from '@/components/BottomBar';
+
+interface Dimension {
+    width: number | string;
+    height: number | string;
+}
 
 const CodePage: React.FC = () => {
     const [explorerParentState, setExplorerParent] = useState<Position | null>('l');
     const [isDragging, setIsDragging] = useState(false);
     const [isOver, setIsOver] = useState<Position | null>(null);
-    const [editorWidth, setEditorWidth] = useState<number>(window.innerWidth / 2);
+    const [editorDimensions, setEditorDimensions] = useState<Dimension>({ width: window.innerWidth / 2 - 72, height: '100vh' });
     const [editorLeft, setEditorLeft] = useState<number>(72); // 72px - Sidebar width
 
     const mousePos = useRef([0, 0] as [number, number]);
@@ -51,13 +57,13 @@ const CodePage: React.FC = () => {
         }
     }, [isDragging]);
 
-    const handleExplorerResizeStart = () => {
+    const handleResizeStart = () => {
         window.addEventListener('mousemove', (e) => {
             mousePos.current = [e.clientX, e.clientY];
         });
     };
 
-    const handleExplorerResizeStop = () => {
+    const handleResizeStop = () => {
         window.removeEventListener('mousemove', () => {
             mousePos.current = [0, 0];
         });
@@ -95,15 +101,26 @@ const CodePage: React.FC = () => {
     const handleEditorWindowResize = (e?: MouseEvent | TouchEvent, specificParent?: Position) => {
         e?.preventDefault();
 
-        const el = document.getElementById('resizable-bar');
-        if (!el) return;
+        const elX = document.getElementById('inner-sidebar');
+        const elY = document.getElementById('bottom-bar');
+        if (elX) {
+            const explorerW = elX.getBoundingClientRect().width;
+            const sidebarWidth = 72;
 
-        const explorerW = el.getBoundingClientRect().width;
-        const sidebarWidth = 72;
+            setEditorDimensions((prev) => {
+                return { ...prev, width: window.innerWidth - explorerW - sidebarWidth };
+            });
+            const explorerParent = specificParent ? specificParent : explorerParentState;
+            setEditorLeft(explorerParent === 'l' ? explorerW + sidebarWidth : sidebarWidth);
+        }
 
-        setEditorWidth(window.innerWidth - explorerW - sidebarWidth);
-        const explorerParent = specificParent ? specificParent : explorerParentState;
-        setEditorLeft(explorerParent === 'l' ? explorerW + sidebarWidth : sidebarWidth);
+        if (elY) {
+            const bottomBarH = elY.getBoundingClientRect().height;
+
+            setEditorDimensions((prev) => {
+                return { ...prev, height: window.innerHeight - bottomBarH };
+            });
+        }
     };
 
     useEffect(() => {
@@ -112,7 +129,14 @@ const CodePage: React.FC = () => {
         return () => window.removeEventListener('resize', () => handleEditorWindowResize());
     }, []);
 
+    const handleBottomResize = (e?: MouseEvent | TouchEvent) => {
+        e?.preventDefault();
+        handleEditorWindowResizeDelay();
+    };
+
     // TODO: Make better sidebar and handle explorerParentState null
+
+    // TODO: Make everything responsive
 
     return (
         <div>
@@ -129,12 +153,12 @@ const CodePage: React.FC = () => {
                                 onDragEnd={handleDragEnd}
                                 parent={explorerParentState}
                                 onResize={handleExplorerResize}
-                                onResizeStart={handleExplorerResizeStart}
-                                onResizeStop={handleExplorerResizeStop}
+                                onResizeStart={handleResizeStart}
+                                onResizeStop={handleResizeStop}
                             />
                         ) : null}
                     </DropZone>
-                    <Editor w={editorWidth} left={editorLeft} />
+                    <Editor w={editorDimensions.width} h={editorDimensions.height} left={editorLeft} />
                     <DropZone position='r' onDragOver={(e) => handleDragOver(e, 'r')} isOver={isOver === 'r'} isParent={explorerParentState === 'r'} onDrop={handleDrop}>
                         {explorerParentState === 'r' ? (
                             <ExplorerBar
@@ -142,13 +166,19 @@ const CodePage: React.FC = () => {
                                 onDragEnd={handleDragEnd}
                                 parent={explorerParentState}
                                 onResize={handleExplorerResize}
-                                onResizeStart={handleExplorerResizeStart}
-                                onResizeStop={handleExplorerResizeStop}
+                                onResizeStart={handleResizeStart}
+                                onResizeStop={handleResizeStop}
                             />
                         ) : null}
                     </DropZone>
                 </div>
-                <div id='bottom'></div>
+                <BottomBar
+                    w={editorDimensions.width}
+                    explorerParentState={explorerParentState}
+                    onResize={handleBottomResize}
+                    onResizeStart={handleResizeStart}
+                    onResizeStop={handleResizeStop}
+                />
             </main>
         </div>
     );
