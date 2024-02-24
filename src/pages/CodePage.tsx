@@ -164,6 +164,19 @@ const CodePage: React.FC = () => {
         handleEditorWindowResizeDelay();
     };
 
+    const handleSidebarExplorerClick = () => {
+        if (explorerParentState === null) {
+            setExplorerParent('l');
+            const explorerW = document.getElementById('inner-sidebar')?.getBoundingClientRect().width;
+            CodeEditorDimensionsStorage.set({ explorerBar: { parent: 'l', width: explorerW || 250 } });
+            handleEditorWindowResizeDelay(undefined, 'l');
+        } else {
+            setExplorerParent(null);
+            CodeEditorDimensionsStorage.set({ explorerBar: { parent: null, width: 0 } });
+            setEditorDimensionsToFull();
+        }
+    };
+
     // TODO: Make better sidebar and handle explorerParentState null
 
     // TODO: Make everything responsive
@@ -173,7 +186,7 @@ const CodePage: React.FC = () => {
             <div id='bg' className='fixed -z-50 h-full w-full'>
                 <BgStars />
             </div>
-            <Sidebar />
+            <Sidebar explorerChose={explorerParentState !== null} onExplorerClick={handleSidebarExplorerClick} />
             <main className='h-screen overflow-hidden bg-secondary-bg/50 pb-16 md:pl-18 -md:pt-16'>
                 <div>
                     <DropZone onDragOver={(e) => handleDragOver(e, 'l')} isOver={isOver === 'l'} isParent={explorerParentState === 'l'}>
