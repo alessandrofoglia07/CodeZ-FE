@@ -19,10 +19,10 @@ const BottomBar: React.FC<Props> = ({ w, explorerParentState, onResize, onResize
     }, [w]);
 
     return (
-        <div className='absolute bottom-0' style={{ width, right: explorerParentState === 'l' ? 0 : undefined, left: explorerParentState === 'r' ? 72 : undefined }}>
+        <div className='absolute bottom-0' style={{ width, right: explorerParentState === 'l' ? 0 : undefined, left: explorerParentState === 'r' ? 56 : undefined }}>
             <Resizable
                 defaultSize={{ width: '100%', height: CodeEditorDimensionsStorage.get()?.bottomBar?.height || 280 }}
-                minHeight={50}
+                minHeight={150}
                 maxHeight='80vh'
                 enable={{ top: true }}
                 handleClasses={{ top: 'w-full bg-gray-600 pb-2 opacity-0 hover:animate-opacity-explorer-bar active:animate-opacity-explorer-bar !cursor-n-resize' }}

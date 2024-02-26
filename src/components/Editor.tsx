@@ -7,9 +7,9 @@ interface Props {
 }
 
 const Editor: React.FC<Props> = ({ w, h, left }: Props) => {
-    const [width, setWidth] = useState<number | string>(window.innerWidth - 72);
+    const [width, setWidth] = useState<number | string>(window.innerWidth - 56);
     const [height, setHeight] = useState<number | string>(window.innerHeight);
-    const [editorLeft, setEditorLeft] = useState<number>(72); // 72px - Sidebar width
+    const [editorLeft, setEditorLeft] = useState<number>(56); // 56px - Sidebar width
 
     useEffect(() => {
         setWidth(w);

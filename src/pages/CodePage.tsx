@@ -18,8 +18,8 @@ const CodePage: React.FC = () => {
     const [explorerParentState, setExplorerParent] = useState<Position | null>(parent !== undefined ? parent : 'l');
     const [isDragging, setIsDragging] = useState(false);
     const [isOver, setIsOver] = useState<Position | null>(null);
-    const [editorDimensions, setEditorDimensions] = useState<Dimension>({ width: window.innerWidth / 2 - 72, height: '100vh' });
-    const [editorLeft, setEditorLeft] = useState<number>(72); // 72px - Sidebar width
+    const [editorDimensions, setEditorDimensions] = useState<Dimension>({ width: window.innerWidth / 2 - 56, height: '100vh' });
+    const [editorLeft, setEditorLeft] = useState<number>(56); // 56px - Sidebar width
 
     const mousePos = useRef([0, 0] as [number, number]);
 
@@ -87,10 +87,10 @@ const CodePage: React.FC = () => {
 
     const setEditorDimensionsToFull = () => {
         setEditorDimensions((prev) => {
-            return { ...prev, width: window.innerWidth - 72 };
+            return { ...prev, width: window.innerWidth - 56 };
         });
-        setEditorLeft(72);
-    }
+        setEditorLeft(56);
+    };
 
     const handleExplorerResize = (e: MouseEvent | TouchEvent, direction: string) => {
         handleEditorWindowResize(e);
@@ -100,21 +100,21 @@ const CodePage: React.FC = () => {
         const explorerW = document.getElementById('inner-sidebar')?.getBoundingClientRect().width;
         if (!explorerW) return;
 
-        const sidebarWidth = 72;
+        const sidebarWidth = 56;
 
         switch (explorerParentState) {
             case 'l':
                 if (mousePos.current[0] - sidebarWidth < explorerW / 2 - 35) {
                     setExplorerParent(null);
                     CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW, parent: null } });
-                    setEditorDimensionsToFull()
+                    setEditorDimensionsToFull();
                 }
                 break;
             case 'r':
                 if (window.innerWidth - mousePos.current[0] - sidebarWidth < explorerW / 2 - 35) {
                     setExplorerParent(null);
                     CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW, parent: null } });
-                    setEditorDimensionsToFull()
+                    setEditorDimensionsToFull();
                 }
                 break;
         }
@@ -133,7 +133,7 @@ const CodePage: React.FC = () => {
         const elY = document.getElementById('bottom-bar');
         if (elX) {
             const explorerW = elX.getBoundingClientRect().width;
-            const sidebarWidth = 72;
+            const sidebarWidth = 56;
 
             setEditorDimensions((prev) => {
                 return { ...prev, width: window.innerWidth - explorerW - sidebarWidth };
@@ -141,7 +141,7 @@ const CodePage: React.FC = () => {
             const explorerParent = specificParent ? specificParent : explorerParentState;
             setEditorLeft(explorerParent === 'l' ? explorerW + sidebarWidth : sidebarWidth);
         } else {
-            setEditorDimensionsToFull()
+            setEditorDimensionsToFull();
         }
 
         if (elY) {
@@ -162,6 +162,13 @@ const CodePage: React.FC = () => {
     const handleBottomResize = (e?: MouseEvent | TouchEvent) => {
         e?.preventDefault();
         handleEditorWindowResizeDelay();
+
+        const bottomBarH = document.getElementById('bottom-bar')?.getBoundingClientRect().height;
+        if (!bottomBarH) return;
+
+        if (window.innerHeight - mousePos.current[1] < bottomBarH / 2) {
+            console.log('less than half');
+        }
     };
 
     const handleSidebarExplorerClick = () => {
@@ -187,7 +194,7 @@ const CodePage: React.FC = () => {
                 <BgStars />
             </div>
             <Sidebar explorerChose={explorerParentState !== null} onExplorerClick={handleSidebarExplorerClick} />
-            <main className='h-screen overflow-hidden bg-secondary-bg/50 pb-16 md:pl-18 -md:pt-16'>
+            <main className='h-screen overflow-hidden bg-secondary-bg/50 pb-16 md:pl-14 -md:pt-16'>
                 <div>
                     <DropZone onDragOver={(e) => handleDragOver(e, 'l')} isOver={isOver === 'l'} isParent={explorerParentState === 'l'}>
                         {explorerParentState === 'l' ? (
