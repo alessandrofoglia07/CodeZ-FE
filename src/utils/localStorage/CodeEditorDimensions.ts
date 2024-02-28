@@ -7,6 +7,7 @@ interface Data {
     };
     bottomBar: {
         height: number | string;
+        show: boolean;
     };
 }
 

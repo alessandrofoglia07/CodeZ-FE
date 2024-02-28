@@ -15,11 +15,13 @@ interface Dimension {
 
 const CodePage: React.FC = () => {
     const parent = CodeEditorDimensionsStorage.get()?.explorerBar?.parent;
+    const bottomBarShowStorage = CodeEditorDimensionsStorage.get()?.bottomBar?.show;
     const [explorerParentState, setExplorerParent] = useState<Position | null>(parent !== undefined ? parent : 'l');
     const [isDragging, setIsDragging] = useState(false);
     const [isOver, setIsOver] = useState<Position | null>(null);
     const [editorDimensions, setEditorDimensions] = useState<Dimension>({ width: window.innerWidth / 2 - 56, height: '100vh' });
     const [editorLeft, setEditorLeft] = useState<number>(56); // 56px - Sidebar width
+    const [bottomBarShow, setBottomBarShow] = useState<boolean>(bottomBarShowStorage !== undefined ? bottomBarShowStorage : true);
 
     const mousePos = useRef([0, 0] as [number, number]);
 
@@ -81,7 +83,7 @@ const CodePage: React.FC = () => {
             CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW, parent: explorerParentState } });
         }
         if (bottomBarH) {
-            CodeEditorDimensionsStorage.set({ bottomBar: { height: bottomBarH } });
+            CodeEditorDimensionsStorage.set({ bottomBar: { height: bottomBarH, show: bottomBarShow } });
         }
     };
 
@@ -167,7 +169,8 @@ const CodePage: React.FC = () => {
         if (!bottomBarH) return;
 
         if (window.innerHeight - mousePos.current[1] < bottomBarH / 2) {
-            console.log('less than half');
+            setBottomBarShow(false);
+            CodeEditorDimensionsStorage.set({ bottomBar: { height: bottomBarH, show: false } });
         }
     };
 
@@ -222,13 +225,15 @@ const CodePage: React.FC = () => {
                         ) : null}
                     </DropZone>
                 </div>
-                <BottomBar
-                    w={editorDimensions.width}
-                    explorerParentState={explorerParentState}
-                    onResize={handleBottomResize}
-                    onResizeStart={handleResizeStart}
-                    onResizeStop={handleResizeStop}
-                />
+                {bottomBarShow && (
+                    <BottomBar
+                        w={editorDimensions.width}
+                        explorerParentState={explorerParentState}
+                        onResize={handleBottomResize}
+                        onResizeStart={handleResizeStart}
+                        onResizeStop={handleResizeStop}
+                    />
+                )}
             </main>
         </div>
     );

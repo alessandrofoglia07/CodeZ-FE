@@ -13,6 +13,10 @@ interface Props {
 const Sidebar: React.FC<Props> = ({ explorerChose, onExplorerClick }: Props) => {
     const { isAuth, userData } = useContext(AuthContext)!;
 
+    const onMenuClick = () => {
+        console.log('Open popover menu');
+    };
+
     return (
         <aside
             id='Sidebar'
@@ -20,7 +24,7 @@ const Sidebar: React.FC<Props> = ({ explorerChose, onExplorerClick }: Props) => 
             <Logo containerClassName='md:py-6 -md:pl-6 -md:pr-8 -md:pt-4' />
             <div className='flex h-full w-full items-center gap-6 md:flex-col'>
                 <button
-                    onClick={onExplorerClick}
+                    onClick={onMenuClick}
                     className='group grid h-full w-min place-items-center *:text-2xl *:text-slate-400 *:transition-colors *:hover:text-slate-100 md:h-min md:w-full'>
                     <RxHamburgerMenu />
                 </button>
