@@ -35,12 +35,12 @@ const CodePage: React.FC = () => {
             if (isOver) {
                 handleEditorWindowResizeDelay(undefined, isOver);
                 const explorerW = document.getElementById('inner-sidebar')?.getBoundingClientRect().width;
-                CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW || 200, parent: isOver } });
+                CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW || 200, parent: isOver, backup: isOver } });
                 return isOver;
             }
             handleEditorWindowResizeDelay(undefined, explorerParentState || undefined);
             const explorerW = document.getElementById('inner-sidebar')?.getBoundingClientRect().width;
-            CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW || 200, parent: explorerParentState || null } });
+            CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW || 200, parent: explorerParentState || null, backup: explorerParentState || 'l' } });
             return prev;
         });
     };
@@ -57,7 +57,7 @@ const CodePage: React.FC = () => {
         setIsDragging(false);
         setExplorerParent(el);
         const explorerW = document.getElementById('inner-sidebar')?.getBoundingClientRect().width;
-        CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW || 200, parent: el } });
+        CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW || 200, parent: el, backup: el } });
         handleEditorWindowResizeDelay(undefined, el);
     };
 
@@ -80,7 +80,7 @@ const CodePage: React.FC = () => {
         const explorerW = document.getElementById('inner-sidebar')?.getBoundingClientRect().width;
         const bottomBarH = document.getElementById('bottom-bar')?.getBoundingClientRect().height;
         if (explorerW) {
-            CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW, parent: explorerParentState } });
+            CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW, parent: explorerParentState, backup: explorerParentState || 'l' } });
         }
         if (bottomBarH) {
             CodeEditorDimensionsStorage.set({ bottomBar: { height: bottomBarH, show: bottomBarShow } });
@@ -107,15 +107,17 @@ const CodePage: React.FC = () => {
         switch (explorerParentState) {
             case 'l':
                 if (mousePos.current[0] - sidebarWidth < explorerW / 2 - 35) {
+                    const backupParent = explorerParentState;
                     setExplorerParent(null);
-                    CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW, parent: null } });
+                    CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW, parent: null, backup: backupParent } });
                     setEditorDimensionsToFull();
                 }
                 break;
             case 'r':
                 if (window.innerWidth - mousePos.current[0] - sidebarWidth < explorerW / 2 - 35) {
+                    const backupParent = explorerParentState;
                     setExplorerParent(null);
-                    CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW, parent: null } });
+                    CodeEditorDimensionsStorage.set({ explorerBar: { width: explorerW, parent: null, backup: backupParent } });
                     setEditorDimensionsToFull();
                 }
                 break;
@@ -176,18 +178,17 @@ const CodePage: React.FC = () => {
 
     const handleSidebarExplorerClick = () => {
         if (explorerParentState === null) {
-            setExplorerParent('l');
             const explorerW = document.getElementById('inner-sidebar')?.getBoundingClientRect().width;
-            CodeEditorDimensionsStorage.set({ explorerBar: { parent: 'l', width: explorerW || 250 } });
+            const backupParent = CodeEditorDimensionsStorage.get()?.explorerBar?.backup || 'l';
+            setExplorerParent(backupParent);
+            CodeEditorDimensionsStorage.set({ explorerBar: { parent: backupParent, width: explorerW || 250, backup: backupParent } });
             handleEditorWindowResizeDelay(undefined, 'l');
         } else {
             setExplorerParent(null);
-            CodeEditorDimensionsStorage.set({ explorerBar: { parent: null, width: 0 } });
+            CodeEditorDimensionsStorage.set({ explorerBar: { parent: null, width: 0, backup: explorerParentState } });
             setEditorDimensionsToFull();
         }
     };
-
-    // TODO: Make better sidebar and handle explorerParentState null
 
     // TODO: Make everything responsive
 

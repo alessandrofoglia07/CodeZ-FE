@@ -4,6 +4,7 @@ interface Data {
     explorerBar: {
         width: number | string;
         parent: Position | null; // 'l' | 'r' | null (null means it's not docked)
+        backup: Position; // 'l' | 'r' (last position before undocking)
     };
     bottomBar: {
         height: number | string;
